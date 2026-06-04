@@ -400,6 +400,44 @@
       .proceso__content p { max-width: none; margin-inline: 0; }
       .proceso__connector { display: none; }
     }
+
+    /* ── FAQ ── */
+    .faq__inner { max-width: 720px; }
+    .faq__list { display: flex; flex-direction: column; }
+    .faq__item { border-bottom: 1px solid var(--border); }
+    .faq__item:first-child { border-top: 1px solid var(--border); }
+    .faq__question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-block: 20px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    .faq__question::-webkit-details-marker { display: none; }
+    .faq__chevron {
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+    }
+    details[open] .faq__chevron { transform: rotate(180deg); }
+    .faq__answer { animation: faqOpen 0.25s ease; }
+    .faq__answer p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding-bottom: 20px;
+    }
+    @keyframes faqOpen {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
@@ -583,7 +621,61 @@
         </div>
       </div>
     </section>
-    <!-- ⑥ FAQ -->
+    <section id="faq" class="faq">
+      <div class="container faq__inner">
+        <div class="section-header">
+          <span class="eyebrow">Preguntas frecuentes</span>
+          <h2>FAQ</h2>
+        </div>
+        <div class="faq__list">
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Trabajan con cualquier tipo de negocio?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>Sí. Trabajamos con pymes, emprendedores, e-commerce y startups de cualquier industria. Lo único que necesitamos es que tengas un negocio que quiera crecer.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Cuánto tiempo tarda en verse resultados?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>Depende del servicio. En publicidad paga (Google y Meta Ads) podés ver resultados desde la primera semana. En SEO, el impacto sostenido tarda entre 3 y 6 meses. Siempre lo aclaramos antes de arrancar.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Cómo son los precios?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>No tenemos paquetes rígidos. Cotizamos según tu objetivo, la escala del proyecto y los canales involucrados. Escribinos y armamos una propuesta sin compromiso.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Hacen contratos de largo plazo?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>No exigimos contratos de largo plazo. Creemos que la relación se sostiene por resultados, no por cláusulas. La mayoría de nuestros clientes se queda porque ve el retorno.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Qué necesito para empezar?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>Solo una charla. Nos contás dónde estás y adónde querés llegar, y nosotros nos encargamos del resto. Sin formularios extensos ni reuniones interminables.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
     <!-- ⑦ CTA FINAL -->
   </main>
 
