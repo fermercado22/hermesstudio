@@ -344,6 +344,62 @@
       .servicios__grid { grid-template-columns: 1fr; }
       .servicio-card--wide { flex-direction: column; gap: 0; }
     }
+
+    /* ── PROCESO ── */
+    .proceso { background: var(--surface); }
+    .proceso__steps {
+      display: flex;
+      align-items: flex-start;
+    }
+    .proceso__step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+    }
+    .proceso__num {
+      width: 48px;
+      height: 48px;
+      background: var(--dark);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .proceso__content h3 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .proceso__content p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 180px;
+      margin-inline: auto;
+    }
+    .proceso__connector {
+      flex: 0 0 40px;
+      height: 2px;
+      background: var(--border);
+      margin-top: 24px;
+      align-self: flex-start;
+    }
+
+    @media (max-width: 767px) {
+      .proceso__steps { flex-direction: column; align-items: stretch; }
+      .proceso__step { flex-direction: row; text-align: left; gap: 20px; padding-block: 20px; }
+      .proceso__step:not(:last-child) { border-bottom: 1px solid var(--border); }
+      .proceso__content p { max-width: none; margin-inline: 0; }
+      .proceso__connector { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -485,7 +541,48 @@
         </div>
       </div>
     </section>
-    <!-- ⑤ PROCESO -->
+    <section id="proceso" class="proceso">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Cómo trabajamos</span>
+          <h2>Nuestro proceso</h2>
+          <p>Cuatro pasos claros, sin sorpresas.</p>
+        </div>
+        <div class="proceso__steps">
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">1</div>
+            <div class="proceso__content">
+              <h3>Diagnóstico</h3>
+              <p>Entendemos tu negocio, tu mercado y tus objetivos reales antes de proponer nada.</p>
+            </div>
+          </div>
+          <div class="proceso__connector" aria-hidden="true"></div>
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">2</div>
+            <div class="proceso__content">
+              <h3>Estrategia</h3>
+              <p>Diseñamos el plan a medida: canales, presupuesto, plazos y métricas de éxito.</p>
+            </div>
+          </div>
+          <div class="proceso__connector" aria-hidden="true"></div>
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">3</div>
+            <div class="proceso__content">
+              <h3>Ejecución</h3>
+              <p>Lanzamos, testeamos y optimizamos continuamente para maximizar resultados.</p>
+            </div>
+          </div>
+          <div class="proceso__connector" aria-hidden="true"></div>
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">4</div>
+            <div class="proceso__content">
+              <h3>Resultados</h3>
+              <p>Medimos todo, reportamos con transparencia y escalamos lo que funciona.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- ⑥ FAQ -->
     <!-- ⑦ CTA FINAL -->
   </main>
