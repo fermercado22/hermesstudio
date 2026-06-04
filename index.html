@@ -255,6 +255,38 @@
       .hero__services { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
       .hero__service-card--empty { display: none; }
     }
+
+    /* ── MANIFIESTO ── */
+    .manifiesto {
+      background: var(--dark);
+      padding-block: 96px;
+    }
+    .manifiesto__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .manifiesto__eyebrow {
+      color: var(--dark-muted);
+      border-color: #333;
+    }
+    .manifiesto__quote {
+      font-size: clamp(22px, 4vw, 36px);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 24px;
+      max-width: 720px;
+      font-style: normal;
+    }
+    .manifiesto__body {
+      font-size: 16px;
+      color: var(--dark-muted);
+      line-height: 1.7;
+      max-width: 480px;
+    }
   </style>
 </head>
 <body>
@@ -323,7 +355,17 @@
         </div>
       </div>
     </section>
-    <!-- ③ MANIFIESTO -->
+    <section class="manifiesto" aria-labelledby="manifiesto-title">
+      <div class="container manifiesto__inner">
+        <span class="eyebrow manifiesto__eyebrow">Por qué existimos</span>
+        <blockquote id="manifiesto-title" class="manifiesto__quote">
+          "El marketing no es un gasto.<br>Es el puente entre tu negocio<br>y las personas que lo necesitan."
+        </blockquote>
+        <p class="manifiesto__body">
+          En Hermes Studio creemos que cada marca merece una estrategia a su medida. Somos veloces como el dios que nos inspira — y obsesivos con los resultados.
+        </p>
+      </div>
+    </section>
     <!-- ④ SERVICIOS -->
     <!-- ⑤ PROCESO -->
     <!-- ⑥ FAQ -->
