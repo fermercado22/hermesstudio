@@ -287,6 +287,63 @@
       line-height: 1.7;
       max-width: 480px;
     }
+
+    /* ── SERVICIOS ── */
+    .servicios__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .servicio-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      background: var(--bg);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .servicio-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .servicio-card__icon {
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .servicio-card__icon i { width: 20px; height: 20px; color: var(--text); }
+    .servicio-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .servicio-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .servicio-card--wide {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .servicio-card--wide .servicio-card__icon { flex-shrink: 0; }
+    .servicio-card--wide h3 { margin-bottom: 6px; }
+
+    @media (max-width: 1023px) {
+      .servicios__grid { grid-template-columns: repeat(2, 1fr); }
+      .servicio-card--wide { grid-column: 1 / -1; }
+    }
+    @media (max-width: 767px) {
+      .servicios__grid { grid-template-columns: 1fr; }
+      .servicio-card--wide { flex-direction: column; gap: 0; }
+    }
   </style>
 </head>
 <body>
@@ -366,7 +423,68 @@
         </p>
       </div>
     </section>
-    <!-- ④ SERVICIOS -->
+    <section id="servicios" class="servicios">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Lo que hacemos</span>
+          <h2>Servicios</h2>
+          <p>Todo lo que tu marca necesita para crecer, en un solo lugar.</p>
+        </div>
+        <div class="servicios__grid">
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="pen-tool" aria-hidden="true"></i>
+            </div>
+            <h3>Diseño</h3>
+            <p>Identidad visual, materiales de marca y piezas para redes sociales que comunican con personalidad.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="globe" aria-hidden="true"></i>
+            </div>
+            <h3>Web</h3>
+            <p>Sitios rápidos, modernos y optimizados para convertir visitantes en clientes.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="target" aria-hidden="true"></i>
+            </div>
+            <h3>Google Ads</h3>
+            <p>Campañas en buscadores y display optimizadas para el menor costo por adquisición posible.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="smartphone" aria-hidden="true"></i>
+            </div>
+            <h3>Meta Ads</h3>
+            <p>Publicidad en Facebook e Instagram con creatividades y segmentación que realmente venden.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="search" aria-hidden="true"></i>
+            </div>
+            <h3>SEO</h3>
+            <p>Posicionamiento orgánico para aparecer primero cuando tus clientes te buscan en Google.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="zap" aria-hidden="true"></i>
+            </div>
+            <h3>Automatizaciones</h3>
+            <p>Flujos de trabajo automáticos que reducen tareas manuales y escalan tu operación sin más personas.</p>
+          </div>
+          <div class="servicio-card servicio-card--wide">
+            <div class="servicio-card__icon">
+              <i data-lucide="bar-chart-2" aria-hidden="true"></i>
+            </div>
+            <div>
+              <h3>Dashboards</h3>
+              <p>Métricas de tu negocio centralizadas en tiempo real. Tomá decisiones con datos, no con intuición.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- ⑤ PROCESO -->
     <!-- ⑥ FAQ -->
     <!-- ⑦ CTA FINAL -->
