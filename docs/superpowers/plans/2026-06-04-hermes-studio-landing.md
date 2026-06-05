@@ -1,0 +1,1120 @@
+# Hermes Studio Landing Page — Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Build the complete Hermes Studio landing page as a single `index.html` — 8 sections, HTML/CSS/JS vanilla, deployable without any build step.
+
+**Architecture:** One `index.html`. All CSS in a `<style>` block in `<head>`. All JS in a `<script>` block before `</body>`. Tasks add HTML into comment-slot placeholders and append CSS to the style block. Lucide icons via unpkg CDN (`lucide.createIcons()` called at end of script).
+
+**Tech Stack:** HTML5, CSS3 (custom properties, grid, flexbox, clamp), Vanilla JS, Inter (Google Fonts, font-display: swap), Lucide icons (unpkg CDN)
+
+> **⚠️ Before deploying:** Replace every instance of `REEMPLAZAR_NUMERO` with your WhatsApp number in international format without `+` (example for Argentina: `5491112345678`).
+
+---
+
+### Task 1: Scaffold — HTML skeleton, CSS foundation, SEO, Schema.org
+
+**Files:**
+- Create: `index.html`
+
+- [ ] **Step 1: Initialize git**
+
+```bash
+git init
+```
+
+- [ ] **Step 2: Create index.html**
+
+Create `index.html` at the project root with:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermes Studio — Agencia de Marketing Digital</title>
+  <meta name="description" content="Agencia de marketing digital especializada en diseño web, Google Ads, Meta Ads, SEO, automatizaciones y dashboards. Hacemos crecer tu negocio.">
+  <meta property="og:title" content="Hermes Studio — Agencia de Marketing Digital">
+  <meta property="og:description" content="Diseño, web, Ads, SEO y automatizaciones para marcas que quieren crecer en serio.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_AR">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hermes Studio — Agencia de Marketing Digital">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400;0,14..32,600;0,14..32,800&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Hermes Studio",
+    "description": "Agencia de marketing digital especializada en diseño, web, Google Ads, Meta Ads, SEO, automatizaciones y dashboards.",
+    "url": "https://hermesstudio.com.ar",
+    "priceRange": "$$",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": "Spanish"
+    }
+  }
+  </script>
+  <style>
+    /* ── CUSTOM PROPERTIES ── */
+    :root {
+      --bg: #ffffff;
+      --text: #111111;
+      --text-muted: #777777;
+      --text-light: #aaaaaa;
+      --border: #e5e5e5;
+      --surface: #f5f5f5;
+      --dark: #111111;
+      --dark-muted: #888888;
+      --whatsapp: #25D366;
+      --whatsapp-hover: #1ebe5d;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --radius-sm: 6px;
+      --radius: 10px;
+      --container: 1100px;
+      --section-v: 96px;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--font); cursor: pointer; border: none; background: none; }
+
+    /* ── LAYOUT ── */
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin-inline: auto;
+      padding-inline: 24px;
+    }
+    section { padding-block: var(--section-v); }
+
+    /* ── TYPOGRAPHY UTILITIES ── */
+    .eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .section-header h2 {
+      font-size: clamp(26px, 4vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+    .section-header p {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-inline: auto;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 22px;
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      line-height: 1;
+    }
+    .btn-whatsapp {
+      background: var(--whatsapp);
+      color: #fff;
+    }
+    .btn-whatsapp:hover {
+      background: var(--whatsapp-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,211,102,0.3);
+    }
+    .btn-outline {
+      border: 1.5px solid var(--border);
+      color: var(--text-muted);
+    }
+    .btn-outline:hover { border-color: var(--text); color: var(--text); }
+    .btn-dark {
+      background: var(--dark);
+      color: #fff;
+    }
+    .btn-dark:hover { background: #333; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+
+  <!-- ① NAV -->
+
+  <main>
+    <!-- ② HERO -->
+    <!-- ③ MANIFIESTO -->
+    <!-- ④ SERVICIOS -->
+    <!-- ⑤ PROCESO -->
+    <!-- ⑥ FAQ -->
+    <!-- ⑦ CTA FINAL -->
+  </main>
+
+  <!-- ⑧ FOOTER -->
+
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script>
+    // JS assembled in Task 9
+  </script>
+</body>
+</html>
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Open `index.html`. Expected: blank white page, Inter font loading, no console errors.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: scaffold HTML + CSS foundation"
+```
+
+---
+
+### Task 2: Nav — sticky, logo, links, WhatsApp CTA, hamburger mobile
+
+**Files:**
+- Modify: `index.html` — replace `<!-- ① NAV -->` with markup below; append CSS to `<style>`
+
+- [ ] **Step 1: Replace `<!-- ① NAV -->` with**
+
+```html
+  <header class="nav" id="nav">
+    <div class="container nav__inner">
+      <a href="#" class="nav__logo">Hermes Studio</a>
+      <nav class="nav__links" id="navLinks" aria-label="Navegación principal">
+        <a href="#servicios">Servicios</a>
+        <a href="#proceso">Proceso</a>
+        <a href="#faq">FAQ</a>
+        <a href="https://wa.me/REEMPLAZAR_NUMERO?text=Hola%20Hermes%20Studio%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20servicios" target="_blank" rel="noopener" class="btn btn-whatsapp nav__cta">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.97-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          WhatsApp
+        </a>
+      </nav>
+      <button class="nav__burger" id="navBurger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+```
+
+- [ ] **Step 2: Append to `<style>` (before `</style>`)**
+
+```css
+    /* ── NAV ── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .nav.scrolled { border-bottom-color: var(--border); }
+    .nav__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 24px;
+    }
+    .nav__logo {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      flex-shrink: 0;
+    }
+    .nav__links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav__links a:not(.btn) {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .nav__links a:not(.btn):hover { color: var(--text); }
+    .nav__cta { font-size: 13px; padding: 9px 16px; }
+    .nav__burger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      padding: 4px;
+    }
+    .nav__burger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    @media (max-width: 767px) {
+      .nav__links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 24px 24px;
+        gap: 16px;
+      }
+      .nav__links.open { display: flex; }
+      .nav__burger { display: flex; }
+    }
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Expected: sticky white nav with "Hermes Studio" left, links + WhatsApp button right. On mobile (resize to <768px): hamburger visible, links hidden.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: nav — sticky with blur, mobile hamburger"
+```
+
+---
+
+### Task 3: Hero — headline, CTAs, services grid
+
+**Files:**
+- Modify: `index.html` — replace `<!-- ② HERO -->` with markup below; append CSS to `<style>`
+
+- [ ] **Step 1: Replace `<!-- ② HERO -->` with**
+
+```html
+    <section id="hero" class="hero">
+      <div class="container hero__inner">
+        <span class="eyebrow">Agencia de Marketing Digital</span>
+        <h1 class="hero__title">Tu negocio,<br>amplificado.</h1>
+        <p class="hero__sub">Diseño, publicidad digital, SEO y automatizaciones<br>para marcas que quieren crecer en serio.</p>
+        <div class="hero__ctas">
+          <a href="https://wa.me/REEMPLAZAR_NUMERO?text=Hola%20Hermes%20Studio%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20servicios" target="_blank" rel="noopener" class="btn btn-whatsapp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.97-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Escribinos por WhatsApp
+          </a>
+          <a href="#servicios" class="btn btn-outline">Ver servicios ↓</a>
+        </div>
+        <div class="hero__services">
+          <div class="hero__service-card">
+            <i data-lucide="pen-tool" aria-hidden="true"></i>
+            <span>Diseño</span>
+          </div>
+          <div class="hero__service-card">
+            <i data-lucide="globe" aria-hidden="true"></i>
+            <span>Web</span>
+          </div>
+          <div class="hero__service-card">
+            <i data-lucide="target" aria-hidden="true"></i>
+            <span>Google Ads</span>
+          </div>
+          <div class="hero__service-card">
+            <i data-lucide="smartphone" aria-hidden="true"></i>
+            <span>Meta Ads</span>
+          </div>
+          <div class="hero__service-card">
+            <i data-lucide="search" aria-hidden="true"></i>
+            <span>SEO</span>
+          </div>
+          <div class="hero__service-card">
+            <i data-lucide="zap" aria-hidden="true"></i>
+            <span>Automatizaciones</span>
+          </div>
+          <div class="hero__service-card">
+            <i data-lucide="bar-chart-2" aria-hidden="true"></i>
+            <span>Dashboards</span>
+          </div>
+          <div class="hero__service-card hero__service-card--empty" aria-hidden="true"></div>
+        </div>
+      </div>
+    </section>
+```
+
+- [ ] **Step 2: Append to `<style>`**
+
+```css
+    /* ── HERO ── */
+    .hero { padding-block: 80px 64px; text-align: center; }
+    .hero__inner { display: flex; flex-direction: column; align-items: center; }
+    .hero__title {
+      font-size: clamp(48px, 8vw, 88px);
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      line-height: 1.0;
+      margin-bottom: 20px;
+    }
+    .hero__sub {
+      font-size: clamp(15px, 2vw, 18px);
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .hero__ctas {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 64px;
+    }
+    .hero__services {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 720px;
+    }
+    .hero__service-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .hero__service-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .hero__service-card i { width: 22px; height: 22px; color: var(--text); }
+    .hero__service-card span { font-size: 12px; font-weight: 600; color: var(--text); }
+    .hero__service-card--empty { border-style: dashed; border-color: #eee; background: var(--surface); }
+
+    @media (max-width: 767px) {
+      .hero__services { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
+      .hero__service-card--empty { display: none; }
+    }
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Expected: large headline "Tu negocio, amplificado.", subtitle, two CTAs, 8-cell services grid (7 cards + 1 empty). Lucide icons visible (pen, globe, target, smartphone, search, zap, bar-chart).
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: hero — headline, CTAs, services grid"
+```
+
+---
+
+### Task 4: Manifiesto — dark section, brand voice
+
+**Files:**
+- Modify: `index.html` — replace `<!-- ③ MANIFIESTO -->` with markup below; append CSS to `<style>`
+
+- [ ] **Step 1: Replace `<!-- ③ MANIFIESTO -->` with**
+
+```html
+    <section class="manifiesto" aria-labelledby="manifiesto-title">
+      <div class="container manifiesto__inner">
+        <span class="eyebrow manifiesto__eyebrow">Por qué existimos</span>
+        <blockquote id="manifiesto-title" class="manifiesto__quote">
+          "El marketing no es un gasto.<br>Es el puente entre tu negocio<br>y las personas que lo necesitan."
+        </blockquote>
+        <p class="manifiesto__body">
+          En Hermes Studio creemos que cada marca merece una estrategia a su medida. Somos veloces como el dios que nos inspira — y obsesivos con los resultados.
+        </p>
+      </div>
+    </section>
+```
+
+- [ ] **Step 2: Append to `<style>`**
+
+```css
+    /* ── MANIFIESTO ── */
+    .manifiesto {
+      background: var(--dark);
+      padding-block: 96px;
+    }
+    .manifiesto__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .manifiesto__eyebrow {
+      color: var(--dark-muted);
+      border-color: #333;
+    }
+    .manifiesto__quote {
+      font-size: clamp(22px, 4vw, 36px);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      color: #fff;
+      margin-bottom: 24px;
+      max-width: 720px;
+      font-style: normal;
+    }
+    .manifiesto__body {
+      font-size: 16px;
+      color: var(--dark-muted);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Expected: dark full-width section with eyebrow "Por qué existimos", large white quote, and muted paragraph below.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: manifiesto — dark brand voice section"
+```
+
+---
+
+### Task 5: Servicios — 7 detailed service cards with icons
+
+**Files:**
+- Modify: `index.html` — replace `<!-- ④ SERVICIOS -->` with markup below; append CSS to `<style>`
+
+- [ ] **Step 1: Replace `<!-- ④ SERVICIOS -->` with**
+
+```html
+    <section id="servicios" class="servicios">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Lo que hacemos</span>
+          <h2>Servicios</h2>
+          <p>Todo lo que tu marca necesita para crecer, en un solo lugar.</p>
+        </div>
+        <div class="servicios__grid">
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="pen-tool" aria-hidden="true"></i>
+            </div>
+            <h3>Diseño</h3>
+            <p>Identidad visual, materiales de marca y piezas para redes sociales que comunican con personalidad.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="globe" aria-hidden="true"></i>
+            </div>
+            <h3>Web</h3>
+            <p>Sitios rápidos, modernos y optimizados para convertir visitantes en clientes.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="target" aria-hidden="true"></i>
+            </div>
+            <h3>Google Ads</h3>
+            <p>Campañas en buscadores y display optimizadas para el menor costo por adquisición posible.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="smartphone" aria-hidden="true"></i>
+            </div>
+            <h3>Meta Ads</h3>
+            <p>Publicidad en Facebook e Instagram con creatividades y segmentación que realmente venden.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="search" aria-hidden="true"></i>
+            </div>
+            <h3>SEO</h3>
+            <p>Posicionamiento orgánico para aparecer primero cuando tus clientes te buscan en Google.</p>
+          </div>
+          <div class="servicio-card">
+            <div class="servicio-card__icon">
+              <i data-lucide="zap" aria-hidden="true"></i>
+            </div>
+            <h3>Automatizaciones</h3>
+            <p>Flujos de trabajo automáticos que reducen tareas manuales y escalan tu operación sin más personas.</p>
+          </div>
+          <div class="servicio-card servicio-card--wide">
+            <div class="servicio-card__icon">
+              <i data-lucide="bar-chart-2" aria-hidden="true"></i>
+            </div>
+            <div>
+              <h3>Dashboards</h3>
+              <p>Métricas de tu negocio centralizadas en tiempo real. Tomá decisiones con datos, no con intuición.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+```
+
+- [ ] **Step 2: Append to `<style>`**
+
+```css
+    /* ── SERVICIOS ── */
+    .servicios__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .servicio-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      background: var(--bg);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .servicio-card:hover {
+      border-color: #bbb;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .servicio-card__icon {
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .servicio-card__icon i { width: 20px; height: 20px; color: var(--text); }
+    .servicio-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .servicio-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .servicio-card--wide {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .servicio-card--wide .servicio-card__icon { flex-shrink: 0; }
+    .servicio-card--wide h3 { margin-bottom: 6px; }
+
+    @media (max-width: 1023px) {
+      .servicios__grid { grid-template-columns: repeat(2, 1fr); }
+      .servicio-card--wide { grid-column: 1 / -1; }
+    }
+    @media (max-width: 767px) {
+      .servicios__grid { grid-template-columns: 1fr; }
+      .servicio-card--wide { flex-direction: column; gap: 0; }
+    }
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Expected: "Servicios" section with 3-col grid (desktop), all 7 cards with Lucide icons, Dashboards card spanning full width with icon left-aligned.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: servicios — 7 service cards with Lucide icons"
+```
+
+---
+
+### Task 6: Proceso — 4-step process with connecting line
+
+**Files:**
+- Modify: `index.html` — replace `<!-- ⑤ PROCESO -->` with markup below; append CSS to `<style>`
+
+- [ ] **Step 1: Replace `<!-- ⑤ PROCESO -->` with**
+
+```html
+    <section id="proceso" class="proceso">
+      <div class="container">
+        <div class="section-header">
+          <span class="eyebrow">Cómo trabajamos</span>
+          <h2>Nuestro proceso</h2>
+          <p>Cuatro pasos claros, sin sorpresas.</p>
+        </div>
+        <div class="proceso__steps">
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">1</div>
+            <div class="proceso__content">
+              <h3>Diagnóstico</h3>
+              <p>Entendemos tu negocio, tu mercado y tus objetivos reales antes de proponer nada.</p>
+            </div>
+          </div>
+          <div class="proceso__connector" aria-hidden="true"></div>
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">2</div>
+            <div class="proceso__content">
+              <h3>Estrategia</h3>
+              <p>Diseñamos el plan a medida: canales, presupuesto, plazos y métricas de éxito.</p>
+            </div>
+          </div>
+          <div class="proceso__connector" aria-hidden="true"></div>
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">3</div>
+            <div class="proceso__content">
+              <h3>Ejecución</h3>
+              <p>Lanzamos, testeamos y optimizamos continuamente para maximizar resultados.</p>
+            </div>
+          </div>
+          <div class="proceso__connector" aria-hidden="true"></div>
+          <div class="proceso__step">
+            <div class="proceso__num" aria-hidden="true">4</div>
+            <div class="proceso__content">
+              <h3>Resultados</h3>
+              <p>Medimos todo, reportamos con transparencia y escalamos lo que funciona.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+```
+
+- [ ] **Step 2: Append to `<style>`**
+
+```css
+    /* ── PROCESO ── */
+    .proceso { background: var(--surface); }
+    .proceso__steps {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+    }
+    .proceso__step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+    }
+    .proceso__num {
+      width: 48px;
+      height: 48px;
+      background: var(--dark);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .proceso__content h3 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+    .proceso__content p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 180px;
+      margin-inline: auto;
+    }
+    .proceso__connector {
+      flex: 0 0 40px;
+      height: 2px;
+      background: var(--border);
+      margin-top: 24px;
+      align-self: flex-start;
+    }
+
+    @media (max-width: 767px) {
+      .proceso__steps { flex-direction: column; align-items: stretch; gap: 0; }
+      .proceso__step { flex-direction: row; text-align: left; gap: 20px; padding-block: 20px; }
+      .proceso__step:not(:last-child) { border-bottom: 1px solid var(--border); }
+      .proceso__content p { max-width: none; margin-inline: 0; }
+      .proceso__connector { display: none; }
+    }
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Expected: 4 steps in a row on desktop with numbered black circles and connecting lines between them. On mobile: vertical list.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: proceso — 4-step process with connectors"
+```
+
+---
+
+### Task 7: FAQ — accordion with 5 questions
+
+**Files:**
+- Modify: `index.html` — replace `<!-- ⑥ FAQ -->` with markup below; append CSS to `<style>`
+
+- [ ] **Step 1: Replace `<!-- ⑥ FAQ -->` with**
+
+```html
+    <section id="faq" class="faq">
+      <div class="container faq__inner">
+        <div class="section-header">
+          <span class="eyebrow">Preguntas frecuentes</span>
+          <h2>FAQ</h2>
+        </div>
+        <div class="faq__list">
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Trabajan con cualquier tipo de negocio?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>Sí. Trabajamos con pymes, emprendedores, e-commerce y startups de cualquier industria. Lo único que necesitamos es que tengas un negocio que quiera crecer.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Cuánto tiempo tarda en verse resultados?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>Depende del servicio. En publicidad paga (Google y Meta Ads) podés ver resultados desde la primera semana. En SEO, el impacto sostenido tarda entre 3 y 6 meses. Siempre lo aclaramos antes de arrancar.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Cómo son los precios?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>No tenemos paquetes rígidos. Cotizamos según tu objetivo, la escala del proyecto y los canales involucrados. Escribinos y armamos una propuesta sin compromiso.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Hacen contratos de largo plazo?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>No exigimos contratos de largo plazo. Creemos que la relación se sostiene por resultados, no por cláusulas. La mayoría de nuestros clientes se queda porque ve el retorno.</p>
+            </div>
+          </details>
+          <details class="faq__item">
+            <summary class="faq__question">
+              ¿Qué necesito para empezar?
+              <i data-lucide="chevron-down" class="faq__chevron" aria-hidden="true"></i>
+            </summary>
+            <div class="faq__answer">
+              <p>Solo una charla. Nos contás dónde estás y adónde querés llegar, y nosotros nos encargamos del resto. Sin formularios extensos ni reuniones interminables.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+```
+
+- [ ] **Step 2: Append to `<style>`**
+
+```css
+    /* ── FAQ ── */
+    .faq__inner { max-width: 720px; }
+    .faq__list { display: flex; flex-direction: column; gap: 0; }
+    .faq__item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq__item:first-child { border-top: 1px solid var(--border); }
+    .faq__question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-block: 20px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+    }
+    .faq__question::-webkit-details-marker { display: none; }
+    .faq__chevron {
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
+    }
+    details[open] .faq__chevron { transform: rotate(180deg); }
+    .faq__answer {
+      overflow: hidden;
+      animation: faqOpen 0.25s ease;
+    }
+    .faq__answer p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      padding-bottom: 20px;
+    }
+    @keyframes faqOpen {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+```
+
+- [ ] **Step 3: Open in browser and verify**
+
+Expected: 5 FAQ items. Clicking each one expands the answer with animation, chevron rotates. Clicking again closes it.
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: FAQ — native details/summary accordion with animation"
+```
+
+---
+
+### Task 8: CTA Final + Footer
+
+**Files:**
+- Modify: `index.html` — replace `<!-- ⑦ CTA FINAL -->` and `<!-- ⑧ FOOTER -->` with markup below; append CSS to `<style>`
+
+- [ ] **Step 1: Replace `<!-- ⑦ CTA FINAL -->` with**
+
+```html
+    <section class="cta-final" aria-labelledby="cta-title">
+      <div class="container cta-final__inner">
+        <h2 id="cta-title" class="cta-final__title">¿Listo para mover<br>tu negocio hacia adelante?</h2>
+        <p class="cta-final__sub">Sin compromisos. Solo una charla.</p>
+        <a href="https://wa.me/REEMPLAZAR_NUMERO?text=Hola%20Hermes%20Studio%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20servicios" target="_blank" rel="noopener" class="btn btn-whatsapp cta-final__btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.61 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.08 6.08l.97-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Escribinos por WhatsApp
+        </a>
+      </div>
+    </section>
+```
+
+- [ ] **Step 2: Replace `<!-- ⑧ FOOTER -->` with**
+
+```html
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="footer__logo">Hermes Studio</span>
+        <span class="footer__tagline">Marketing que mueve el mundo.</span>
+      </div>
+      <p class="footer__copy">© <span id="footerYear"></span> Hermes Studio. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+```
+
+- [ ] **Step 3: Append to `<style>`**
+
+```css
+    /* ── CTA FINAL ── */
+    .cta-final {
+      background: var(--dark);
+      padding-block: 96px;
+    }
+    .cta-final__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .cta-final__title {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .cta-final__sub {
+      font-size: 16px;
+      color: var(--dark-muted);
+      margin-bottom: 32px;
+    }
+    .cta-final__btn { font-size: 16px; padding: 14px 28px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding-block: 32px;
+    }
+    .footer__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer__brand { display: flex; flex-direction: column; gap: 4px; }
+    .footer__logo { font-size: 15px; font-weight: 800; letter-spacing: -0.03em; }
+    .footer__tagline { font-size: 12px; color: var(--text-muted); }
+    .footer__copy { font-size: 12px; color: var(--text-light); }
+```
+
+- [ ] **Step 4: Open in browser and verify**
+
+Expected: dark CTA section with large headline and big WhatsApp button. Footer below with logo left, copyright right.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: CTA final + footer"
+```
+
+---
+
+### Task 9: JavaScript — nav scroll, hamburger, footer year, Lucide init
+
+**Files:**
+- Modify: `index.html` — replace the `// JS assembled in Task 9` comment inside `<script>` with the code below
+
+- [ ] **Step 1: Replace the script body with**
+
+```js
+    // Init Lucide icons
+    lucide.createIcons();
+
+    // Footer year
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+    // Nav — add .scrolled class on scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+
+    // Mobile hamburger
+    const burger = document.getElementById('navBurger');
+    const navLinks = document.getElementById('navLinks');
+    burger.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      burger.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Close mobile nav on link click
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
+      });
+    });
+```
+
+- [ ] **Step 2: Open in browser and verify**
+
+Expected:
+- Lucide icons appear in hero grid and service cards.
+- Footer shows current year.
+- Scrolling adds a subtle bottom border to the nav.
+- On mobile: hamburger opens/closes the nav links. Clicking a link closes the menu.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add index.html
+git commit -m "feat: JS — nav scroll, hamburger, Lucide init"
+```
+
+---
+
+### Task 10: Lighthouse audit — verify performance and SEO targets
+
+**Files:** No code changes — verification only.
+
+- [ ] **Step 1: Open in browser**
+
+Open `index.html` directly (file:// or via local server):
+
+```bash
+python -m http.server 8080
+# Then open http://localhost:8080
+```
+
+- [ ] **Step 2: Run Lighthouse**
+
+In Chrome DevTools → Lighthouse → run "Mobile" audit.
+
+Expected scores:
+- Performance: 90+
+- Accessibility: 90+
+- Best Practices: 90+
+- SEO: 90+
+
+- [ ] **Step 3: Check accessibility manually**
+
+- Tab through the page — focus rings visible on all interactive elements.
+- All Lucide icons have `aria-hidden="true"` (they're decorative).
+- Nav burger has `aria-label` and `aria-expanded`.
+- Dark sections have sufficient color contrast (white on #111 = 16:1 ratio ✅).
+
+- [ ] **Step 4: Check mobile layout**
+
+Resize browser to 375px width. Verify:
+- Hero headline readable, CTAs stack vertically.
+- Services grid is 2 columns.
+- Proceso steps are vertical list.
+- FAQ accordion works with touch.
+- No horizontal overflow.
+
+- [ ] **Step 5: Replace REEMPLAZAR_NUMERO**
+
+Search the file for `REEMPLAZAR_NUMERO` (appears 3× — nav, hero, CTA final) and replace with the actual WhatsApp number in format `5491XXXXXXXXX`.
+
+- [ ] **Step 6: Final commit**
+
+```bash
+git add index.html
+git commit -m "chore: replace WhatsApp placeholder with real number"
+```
+
+---
+
+## File Summary
+
+| File | Role |
+|------|------|
+| `index.html` | Complete landing page — HTML, CSS, JS in one file |
+| `docs/superpowers/specs/2026-06-04-hermes-studio-landing-design.md` | Design spec |
+| `docs/superpowers/plans/2026-06-04-hermes-studio-landing.md` | This plan |
