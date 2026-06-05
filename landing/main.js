@@ -75,7 +75,7 @@ if (form) {
       (service ? `Me interesa: ${service}.\n` : '') +
       `${message}`
     );
-    window.open(`https://wa.me/5491100000000?text=${text}`, '_blank', 'noopener');
+    window.open(`https://wa.me/5492392613037?text=${text}`, '_blank', 'noopener');
   });
 }
 
