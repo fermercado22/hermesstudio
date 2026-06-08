@@ -1,9 +1,13 @@
 {
-  "outputDirectory": "landing",
   "functions": {
     "api/chat.js": {
       "memory": 256,
       "maxDuration": 30
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/style.css", "destination": "/landing/style.css" },
+    { "source": "/main.js", "destination": "/landing/main.js" },
+    { "source": "/", "destination": "/landing/index.html" }
+  ]
 }
