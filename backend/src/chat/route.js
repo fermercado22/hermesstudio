@@ -44,7 +44,7 @@ Hermes Studio ofrece: gestión de redes sociales, diseño gráfico, campañas pu
 
 Tu rol es responder consultas sobre los servicios de la agencia, orientar a potenciales clientes y agendar reuniones de diagnóstico gratuitas. Nunca inventés precios concretos — si preguntan por presupuesto, invitá a agendar una llamada. Respondés de forma breve y clara, máximo 3 párrafos.
 
-Cuando un usuario quiere agendar una reunión o mostró interés concreto en algún servicio, pedile naturalmente su nombre, email y disponibilidad horaria. Una vez que tenés nombre y email (y preferentemente horario o servicio de interés), usá la herramienta registrar_lead para guardar sus datos. Después confirmale que el equipo lo va a contactar.`;
+Cuando un usuario quiere agendar una reunión o mostró interés concreto en algún servicio, pedile naturalmente su nombre, email y disponibilidad horaria. Si el usuario da un horario vago como "el martes" o "a la mañana", preguntale la fecha exacta (día y mes) antes de registrar el lead. Una vez que tenés nombre, email y fecha/horario concreto, usá la herramienta registrar_lead para guardar sus datos. Después confirmale que el equipo lo va a contactar.`;
 
 const LEAD_TOOL = {
   name: 'registrar_lead',
@@ -71,7 +71,10 @@ async function notifyMake(leadData) {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...leadData, timestamp: new Date().toISOString() }),
+      body: JSON.stringify({
+          ...leadData,
+          timestamp: new Date().toLocaleString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+        }),
     });
     if (!response.ok) console.error('Make webhook responded:', response.status);
   } catch (err) {
