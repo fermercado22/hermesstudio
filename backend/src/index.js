@@ -6,6 +6,7 @@ const { setupWebSocket } = require('./websocket/server');
 const { getStaticInfo } = require('./metrics/collector');
 const { authenticate } = require('./auth/middleware');
 const authRoutes = require('./auth/routes');
+const chatRoute = require('./chat/route');
 const { init } = require('./db');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.json());
 init();
 
 app.use('/api/auth', authRoutes);
+app.use('/api/chat', chatRoute);
 
 app.get('/api/system/info', authenticate, async (req, res) => {
   try {
