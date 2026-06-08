@@ -653,11 +653,22 @@
     }
 
     btn.addEventListener('click', () => isOpen ? closePanel() : openPanel());
-    closeBtn.addEventListener('click', closePanel);
+
+    closeBtn.addEventListener('click', () => {
+      closePanel();
+      sessionStorage.setItem('hchat_closed', '1');
+    });
 
     panel.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closePanel();
+      if (e.key === 'Escape') {
+        closePanel();
+        sessionStorage.setItem('hchat_closed', '1');
+      }
     });
+
+    if (!sessionStorage.getItem('hchat_closed')) {
+      setTimeout(openPanel, 4000);
+    }
 
     async function sendMessage() {
       const text = input.value.trim();
