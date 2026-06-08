@@ -1,8 +1,4 @@
 {
-  "framework": null,
-  "outputDirectory": "landing",
-  "installCommand": "npm install",
-  "buildCommand": "",
   "functions": {
     "api/chat.js": {
       "memory": 256,
