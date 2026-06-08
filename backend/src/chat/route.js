@@ -42,7 +42,42 @@ const SYSTEM_PROMPT = `Sos Hermes, el asistente de inteligencia artificial de He
 
 Hermes Studio ofrece: gestión de redes sociales, diseño gráfico, campañas publicitarias (Meta Ads, Google Ads), email marketing, branding y estrategia digital.
 
-Tu rol es responder consultas sobre los servicios de la agencia, orientar a potenciales clientes, y agendar reuniones de diagnóstico gratuitas. Nunca inventés precios concretos — si preguntan por presupuesto, invitá a agendar una llamada. Respondés de forma breve y clara, máximo 3 párrafos.`;
+Tu rol es responder consultas sobre los servicios de la agencia, orientar a potenciales clientes y agendar reuniones de diagnóstico gratuitas. Nunca inventés precios concretos — si preguntan por presupuesto, invitá a agendar una llamada. Respondés de forma breve y clara, máximo 3 párrafos.
+
+Cuando un usuario quiere agendar una reunión o mostró interés concreto en algún servicio, pedile naturalmente su nombre, email y disponibilidad horaria. Una vez que tenés nombre y email (y preferentemente horario o servicio de interés), usá la herramienta registrar_lead para guardar sus datos. Después confirmale que el equipo lo va a contactar.`;
+
+const LEAD_TOOL = {
+  name: 'registrar_lead',
+  description: 'Registra los datos de un potencial cliente cuando ya tenés su nombre y email. Llamá esta herramienta una sola vez por conversación, cuando el usuario haya dado sus datos de contacto.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      nombre: { type: 'string', description: 'Nombre completo del usuario' },
+      email: { type: 'string', description: 'Email de contacto' },
+      horario: { type: 'string', description: 'Disponibilidad horaria o día preferido para la reunión' },
+      interes: { type: 'string', description: 'Servicio o necesidad que le interesa' },
+    },
+    required: ['nombre', 'email'],
+  },
+};
+
+async function notifyMake(leadData) {
+  const url = process.env.MAKE_WEBHOOK_URL;
+  if (!url) {
+    console.warn('MAKE_WEBHOOK_URL not set — lead not forwarded:', leadData);
+    return;
+  }
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...leadData, timestamp: new Date().toISOString() }),
+    });
+    if (!response.ok) console.error('Make webhook responded:', response.status);
+  } catch (err) {
+    console.error('Make webhook error:', err.message);
+  }
+}
 
 const client = new Anthropic();
 
@@ -57,17 +92,48 @@ router.post('/', chatCors, chatLimiter, async (req, res) => {
     const sanitized = message.trim().slice(0, 500);
     const history = Array.isArray(messages) ? messages.slice(-10) : [];
 
+    const messagesForApi = [
+      ...history,
+      { role: 'user', content: sanitized },
+    ];
+
     const response = await client.messages.create({
       model: 'claude-opus-4-8',
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      messages: [
-        ...history,
-        { role: 'user', content: sanitized },
-      ],
+      tools: [LEAD_TOOL],
+      messages: messagesForApi,
     });
 
-    const reply = response.content[0].text;
+    if (response.stop_reason === 'tool_use') {
+      const toolBlock = response.content.find(b => b.type === 'tool_use');
+
+      await notifyMake(toolBlock.input);
+
+      const followUp = await client.messages.create({
+        model: 'claude-opus-4-8',
+        max_tokens: 1024,
+        system: SYSTEM_PROMPT,
+        tools: [LEAD_TOOL],
+        messages: [
+          ...messagesForApi,
+          { role: 'assistant', content: response.content },
+          {
+            role: 'user',
+            content: [{
+              type: 'tool_result',
+              tool_use_id: toolBlock.id,
+              content: 'Lead registrado exitosamente.',
+            }],
+          },
+        ],
+      });
+
+      const reply = followUp.content.find(b => b.type === 'text')?.text ?? '';
+      return res.json({ reply, leadCaptured: true });
+    }
+
+    const reply = response.content.find(b => b.type === 'text')?.text ?? '';
     res.json({ reply });
   } catch (err) {
     const isProd = process.env.NODE_ENV === 'production';
