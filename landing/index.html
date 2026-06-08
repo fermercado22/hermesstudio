@@ -403,6 +403,325 @@
     <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
   </a>
 
+  <style>
+  /* ── Chat Widget ── */
+  #hchat-btn {
+    position: fixed;
+    bottom: 6rem;
+    right: 1.5rem;
+    z-index: 1100;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #1B3A6B;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(27,58,107,.4);
+    transition: transform .2s, box-shadow .2s;
+  }
+  #hchat-btn:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(27,58,107,.5); }
+  #hchat-btn svg { pointer-events: none; }
+
+  #hchat-panel {
+    position: fixed;
+    bottom: 11rem;
+    right: 1.5rem;
+    z-index: 1100;
+    width: min(360px, calc(100vw - 3rem));
+    max-height: 520px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,.18);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform-origin: bottom right;
+    transition: transform .22s cubic-bezier(.4,0,.2,1), opacity .22s;
+  }
+  #hchat-panel.hchat--hidden { transform: scale(.85); opacity: 0; pointer-events: none; }
+
+  .hchat__header {
+    background: #1B3A6B;
+    color: #fff;
+    padding: .875rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: .625rem;
+    flex-shrink: 0;
+  }
+  .hchat__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .hchat__title { font-family: 'Sora', sans-serif; font-weight: 600; font-size: .875rem; line-height: 1.2; }
+  .hchat__sub { font-size: .72rem; opacity: .75; }
+  .hchat__close {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    padding: .25rem;
+    border-radius: 6px;
+    opacity: .8;
+    transition: opacity .15s;
+  }
+  .hchat__close:hover { opacity: 1; }
+
+  .hchat__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+    scroll-behavior: smooth;
+  }
+  .hchat__bubble {
+    max-width: 82%;
+    padding: .5rem .75rem;
+    border-radius: 14px;
+    font-size: .875rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .hchat__bubble--agent {
+    background: #f1f4f9;
+    color: #1a1a2e;
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+  .hchat__bubble--user {
+    background: #1B3A6B;
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+
+  .hchat__typing {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: .5rem .75rem;
+    background: #f1f4f9;
+    border-radius: 14px;
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+    width: 48px;
+  }
+  .hchat__typing span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #8892a4;
+    animation: hchat-dot .9s infinite;
+  }
+  .hchat__typing span:nth-child(2) { animation-delay: .15s; }
+  .hchat__typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes hchat-dot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+  .hchat__footer {
+    border-top: 1px solid #e8ecf2;
+    padding: .625rem;
+    display: flex;
+    gap: .5rem;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .hchat__input {
+    flex: 1;
+    border: 1.5px solid #dde2eb;
+    border-radius: 10px;
+    padding: .5rem .75rem;
+    font-family: 'Inter', sans-serif;
+    font-size: .875rem;
+    resize: none;
+    outline: none;
+    max-height: 100px;
+    overflow-y: auto;
+    transition: border-color .15s;
+    line-height: 1.4;
+  }
+  .hchat__input:focus { border-color: #1B3A6B; }
+  .hchat__send {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #1B3A6B;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s;
+  }
+  .hchat__send:hover { background: #142d55; }
+  .hchat__send:disabled { background: #8892a4; cursor: not-allowed; }
+  .hchat__send svg { pointer-events: none; }
+  </style>
+
+  <!-- AI Chat Widget -->
+  <button id="hchat-btn" aria-label="Abrir chat con Hermes" aria-expanded="false" aria-controls="hchat-panel">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+    </svg>
+  </button>
+
+  <div id="hchat-panel" class="hchat--hidden" role="dialog" aria-label="Chat con Hermes" aria-modal="true">
+    <div class="hchat__header">
+      <div class="hchat__avatar" aria-hidden="true">⚡</div>
+      <div>
+        <div class="hchat__title">Hermes</div>
+        <div class="hchat__sub">Asistente de Hermes Studio</div>
+      </div>
+      <button class="hchat__close" id="hchat-close" aria-label="Cerrar chat">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="hchat__messages" id="hchat-messages" aria-live="polite" aria-label="Mensajes del chat"></div>
+    <div class="hchat__footer">
+      <textarea
+        id="hchat-input"
+        class="hchat__input"
+        placeholder="Escribí tu mensaje..."
+        rows="1"
+        aria-label="Escribí tu mensaje"
+        maxlength="500"
+      ></textarea>
+      <button id="hchat-send" class="hchat__send" aria-label="Enviar mensaje">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const btn = document.getElementById('hchat-btn');
+    const panel = document.getElementById('hchat-panel');
+    const closeBtn = document.getElementById('hchat-close');
+    const messagesEl = document.getElementById('hchat-messages');
+    const input = document.getElementById('hchat-input');
+    const sendBtn = document.getElementById('hchat-send');
+
+    let isOpen = false;
+    let greeted = false;
+    let history = [];
+    let pending = false;
+
+    function addBubble(text, role) {
+      const div = document.createElement('div');
+      div.className = 'hchat__bubble hchat__bubble--' + (role === 'user' ? 'user' : 'agent');
+      div.textContent = text;
+      messagesEl.appendChild(div);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+      return div;
+    }
+
+    function showTyping() {
+      const el = document.createElement('div');
+      el.className = 'hchat__typing';
+      el.id = 'hchat-typing';
+      el.setAttribute('aria-label', 'Hermes está escribiendo');
+      el.innerHTML = '<span></span><span></span><span></span>';
+      messagesEl.appendChild(el);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function hideTyping() {
+      const el = document.getElementById('hchat-typing');
+      if (el) el.remove();
+    }
+
+    function openPanel() {
+      isOpen = true;
+      panel.classList.remove('hchat--hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      if (!greeted) {
+        greeted = true;
+        addBubble('¡Hola! Soy Hermes 👋 ¿En qué puedo ayudarte hoy?', 'agent');
+      }
+      setTimeout(() => input.focus(), 250);
+    }
+
+    function closePanel() {
+      isOpen = false;
+      panel.classList.add('hchat--hidden');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', () => isOpen ? closePanel() : openPanel());
+    closeBtn.addEventListener('click', closePanel);
+
+    panel.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePanel();
+    });
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text || pending) return;
+
+      pending = true;
+      input.value = '';
+      input.style.height = '';
+      sendBtn.disabled = true;
+
+      addBubble(text, 'user');
+      showTyping();
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, messages: history.slice(-10) }),
+        });
+        hideTyping();
+        const data = await res.json();
+        if (data.reply) {
+          addBubble(data.reply, 'agent');
+          history.push({ role: 'user', content: text });
+          history.push({ role: 'assistant', content: data.reply });
+          if (history.length > 20) history = history.slice(-20);
+        } else {
+          addBubble(data.error || 'Error al conectar. Intentá de nuevo.', 'agent');
+        }
+      } catch {
+        hideTyping();
+        addBubble('Error al conectar. Revisá tu conexión e intentá de nuevo.', 'agent');
+      }
+
+      pending = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    input.addEventListener('input', function () {
+      this.style.height = 'auto';
+      this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+    });
+  })();
+  </script>
+
   <script src="main.js"></script>
 </body>
 </html>
