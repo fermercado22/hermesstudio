@@ -1,4 +1,5 @@
 const Anthropic = require('@anthropic-ai/sdk');
+const { checkAvailability, createCalendarEvent } = require('./calendar');
 
 const ALLOWED_ORIGINS = [
   'https://hermesstudio.com.ar',
@@ -11,22 +12,39 @@ Hermes Studio ofrece: gestión de redes sociales, diseño gráfico, campañas pu
 
 Tu rol es responder consultas sobre los servicios de la agencia, orientar a potenciales clientes y agendar reuniones de diagnóstico gratuitas. Nunca inventés precios concretos — si preguntan por presupuesto, invitá a agendar una llamada. Respondés de forma breve y clara, máximo 3 párrafos.
 
-Cuando un usuario quiere agendar una reunión o mostró interés concreto en algún servicio, pedile naturalmente su nombre, email y disponibilidad horaria. Si el usuario da un horario vago como "el martes" o "a la mañana", preguntale la fecha exacta (día y mes) antes de registrar el lead. Una vez que tenés nombre, email y fecha/horario concreto, usá la herramienta registrar_lead para guardar sus datos. Después confirmale que el equipo lo va a contactar.`;
+Cuando un usuario quiere agendar una reunión o mostró interés concreto en algún servicio, pedile naturalmente su nombre, email y disponibilidad horaria. Si el usuario da un horario vago como "el martes" o "a la mañana", preguntale la fecha exacta (día y mes) antes de verificar. Solo agendás reuniones de lunes a viernes entre las 9:00 y las 18:00 hs (el último turno arranca a las 17:00). Antes de confirmar cualquier horario, siempre usá verificar_disponibilidad con la fecha en formato YYYY-MM-DD y la hora en formato HH:MM. Si el resultado indica que está ocupado o fuera del horario laboral, informalo con naturalidad y pedí otro horario. Una vez que tenés un horario disponible confirmado, nombre y email, usá registrar_lead con nombre, email, horario (texto legible), fecha (YYYY-MM-DD), hora (HH:MM) e interés. Después confirmale que el equipo lo va a contactar.`;
 
 const LEAD_TOOL = {
   name: 'registrar_lead',
-  description: 'Registra los datos de un potencial cliente cuando ya tenés su nombre y email. Llamá esta herramienta una sola vez por conversación, cuando el usuario haya dado sus datos de contacto.',
+  description: 'Registra los datos de un potencial cliente cuando ya tenés su nombre, email y un horario confirmado como disponible. Llamá esta herramienta una sola vez por conversación.',
   input_schema: {
     type: 'object',
     properties: {
       nombre: { type: 'string', description: 'Nombre completo del usuario' },
       email: { type: 'string', description: 'Email de contacto' },
-      horario: { type: 'string', description: 'Fecha y horario concreto para la reunión' },
+      horario: { type: 'string', description: 'Fecha y horario en texto legible, ej: "lunes 15 de junio a las 10:00"' },
+      fecha: { type: 'string', description: 'Fecha en formato YYYY-MM-DD para crear el evento en el calendario' },
+      hora: { type: 'string', description: 'Hora en formato HH:MM para crear el evento en el calendario' },
       interes: { type: 'string', description: 'Servicio o necesidad que le interesa' },
     },
     required: ['nombre', 'email'],
   },
 };
+
+const AVAILABILITY_TOOL = {
+  name: 'verificar_disponibilidad',
+  description: 'Verifica si un horario está disponible en el calendario de Hermes Studio. Llamá esta herramienta cada vez que el usuario proponga un horario, antes de confirmarlo.',
+  input_schema: {
+    type: 'object',
+    properties: {
+      fecha: { type: 'string', description: 'Fecha en formato YYYY-MM-DD' },
+      hora: { type: 'string', description: 'Hora en formato HH:MM (24 horas)' },
+    },
+    required: ['fecha', 'hora'],
+  },
+};
+
+const TOOLS = [AVAILABILITY_TOOL, LEAD_TOOL];
 
 async function notifyMake(leadData) {
   const url = process.env.MAKE_WEBHOOK_URL;
@@ -79,50 +97,73 @@ module.exports = async function handler(req, res) {
     const sanitized = message.trim().slice(0, 500);
     const history = Array.isArray(messages) ? messages.slice(-10) : [];
 
-    const messagesForApi = [
+    let currentMessages = [
       ...history,
       { role: 'user', content: sanitized },
     ];
 
-    const response = await client.messages.create({
+    let currentResponse = await client.messages.create({
       model: 'claude-opus-4-8',
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
-      tools: [LEAD_TOOL],
-      messages: messagesForApi,
+      tools: TOOLS,
+      messages: currentMessages,
     });
 
-    if (response.stop_reason === 'tool_use') {
-      const toolBlock = response.content.find(b => b.type === 'tool_use');
+    let leadCaptured = false;
 
-      await notifyMake(toolBlock.input);
+    while (currentResponse.stop_reason === 'tool_use') {
+      const toolBlock = currentResponse.content.find(b => b.type === 'tool_use');
+      let toolResult;
 
-      const followUp = await client.messages.create({
+      if (toolBlock.name === 'verificar_disponibilidad') {
+        try {
+          const { fecha, hora } = toolBlock.input;
+          const availability = await checkAvailability(fecha, hora);
+          if (!availability.available) {
+            toolResult = availability.reason === 'horario_laboral'
+              ? 'Horario fuera de rango laboral. Solo se pueden agendar reuniones de lunes a viernes de 9:00 a 18:00.'
+              : 'Ese horario ya está ocupado en el calendario.';
+          } else {
+            toolResult = 'Horario disponible.';
+          }
+        } catch (err) {
+          console.error('Calendar check error:', err.message);
+          toolResult = 'No se pudo verificar el calendario. Asumí que el horario está disponible y continuá.';
+        }
+      } else if (toolBlock.name === 'registrar_lead') {
+        await notifyMake(toolBlock.input);
+        try {
+          await createCalendarEvent(toolBlock.input);
+        } catch (err) {
+          console.error('Calendar event error:', err.message);
+        }
+        leadCaptured = true;
+        toolResult = 'Lead registrado exitosamente.';
+      }
+
+      currentMessages = [
+        ...currentMessages,
+        { role: 'assistant', content: currentResponse.content },
+        {
+          role: 'user',
+          content: [{ type: 'tool_result', tool_use_id: toolBlock.id, content: toolResult }],
+        },
+      ];
+
+      currentResponse = await client.messages.create({
         model: 'claude-opus-4-8',
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
-        tools: [LEAD_TOOL],
-        messages: [
-          ...messagesForApi,
-          { role: 'assistant', content: response.content },
-          {
-            role: 'user',
-            content: [{
-              type: 'tool_result',
-              tool_use_id: toolBlock.id,
-              content: 'Lead registrado exitosamente.',
-            }],
-          },
-        ],
+        tools: TOOLS,
+        messages: currentMessages,
       });
-
-      const reply = followUp.content.find(b => b.type === 'text')?.text ?? '';
-      return res.status(200).json({ reply, leadCaptured: true });
     }
 
-    const reply = response.content.find(b => b.type === 'text')?.text ?? '';
-    res.status(200).json({ reply });
+    const reply = currentResponse.content.find(b => b.type === 'text')?.text ?? '';
+    return res.status(200).json({ reply, ...(leadCaptured && { leadCaptured: true }) });
   } catch (err) {
+    console.error('Handler error:', err.message);
     res.status(500).json({ error: 'Ocurrió un error. Por favor, intentá de nuevo.' });
   }
 };
