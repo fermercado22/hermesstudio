@@ -50,7 +50,7 @@ async function notifyMake(leadData) {
   const url = process.env.MAKE_WEBHOOK_URL;
   if (!url) return;
   try {
-    await fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -62,12 +62,17 @@ async function notifyMake(leadData) {
         }),
       }),
     });
+    if (!response.ok) {
+      throw new Error(`Make webhook returned ${response.status}`);
+    }
   } catch (err) {
-    console.error('Make webhook error:', err.message);
+    console.error('Make webhook error:', err.message, { nombre: leadData.nombre, email: leadData.email });
+    throw err;
   }
 }
 
 const client = new Anthropic();
+const MODEL = 'claude-opus-4-8';
 
 module.exports = async function handler(req, res) {
   const origin = req.headers.origin;
@@ -103,7 +108,7 @@ module.exports = async function handler(req, res) {
     ];
 
     let currentResponse = await client.messages.create({
-      model: 'claude-opus-4-8',
+      model: MODEL,
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
       tools: TOOLS,
@@ -111,8 +116,13 @@ module.exports = async function handler(req, res) {
     });
 
     let leadCaptured = false;
+    let iterations = 0;
 
     while (currentResponse.stop_reason === 'tool_use') {
+      if (++iterations > 10) {
+        console.error('Tool loop limit exceeded');
+        break;
+      }
       const toolBlock = currentResponse.content.find(b => b.type === 'tool_use');
       let toolResult;
 
@@ -132,7 +142,11 @@ module.exports = async function handler(req, res) {
           toolResult = 'No se pudo verificar el calendario. Asumí que el horario está disponible y continuá.';
         }
       } else if (toolBlock.name === 'registrar_lead') {
-        await notifyMake(toolBlock.input);
+        try {
+          await notifyMake(toolBlock.input);
+        } catch (err) {
+          console.error('Lead notification failed:', err.message);
+        }
         try {
           await createCalendarEvent(toolBlock.input);
         } catch (err) {
@@ -140,6 +154,18 @@ module.exports = async function handler(req, res) {
         }
         leadCaptured = true;
         toolResult = 'Lead registrado exitosamente.';
+      } else {
+        console.error('Unknown tool called:', toolBlock.name);
+        toolResult = 'Herramienta desconocida. Respondé directamente al usuario.';
+        currentMessages = [
+          ...currentMessages,
+          { role: 'assistant', content: currentResponse.content },
+          {
+            role: 'user',
+            content: [{ type: 'tool_result', tool_use_id: toolBlock.id, content: toolResult }],
+          },
+        ];
+        break;
       }
 
       currentMessages = [
@@ -152,7 +178,7 @@ module.exports = async function handler(req, res) {
       ];
 
       currentResponse = await client.messages.create({
-        model: 'claude-opus-4-8',
+        model: MODEL,
         max_tokens: 1024,
         system: SYSTEM_PROMPT,
         tools: TOOLS,
