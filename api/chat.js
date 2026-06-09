@@ -27,7 +27,7 @@ const LEAD_TOOL = {
       hora: { type: 'string', description: 'Hora en formato HH:MM para crear el evento en el calendario' },
       interes: { type: 'string', description: 'Servicio o necesidad que le interesa' },
     },
-    required: ['nombre', 'email'],
+    required: ['nombre', 'email', 'fecha', 'hora'],
   },
 };
 
