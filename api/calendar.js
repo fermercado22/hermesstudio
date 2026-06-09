@@ -1,11 +1,14 @@
 const { google } = require('googleapis');
 
 function getCalendarClient() {
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
+    throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON env var is not set');
+  }
   const raw = Buffer.from(process.env.GOOGLE_SERVICE_ACCOUNT_JSON, 'base64').toString('utf8');
   const credentials = JSON.parse(raw);
   const auth = new google.auth.GoogleAuth({
     credentials,
-    scopes: ['https://www.googleapis.com/auth/calendar'],
+    scopes: ['https://www.googleapis.com/auth/calendar.events'],
   });
   return google.calendar({ version: 'v3', auth });
 }
@@ -37,7 +40,11 @@ async function checkAvailability(fecha, hora) {
     },
   });
 
-  const busy = response.data.calendars[calendarId].busy;
+  const calendarData = response.data.calendars?.[calendarId];
+  if (!calendarData) {
+    throw new Error(`Calendar ID "${calendarId}" not found in freebusy response`);
+  }
+  const busy = calendarData.busy;
   return busy.length === 0
     ? { available: true }
     : { available: false, reason: 'ocupado' };
