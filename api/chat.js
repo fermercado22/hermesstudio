@@ -1,5 +1,5 @@
 const Anthropic = require('@anthropic-ai/sdk');
-const { checkAvailability, createCalendarEvent } = require('./calendar');
+const { getAvailableSlots, buildCalendlyLink } = require('./calendly');
 
 const ALLOWED_ORIGINS = [
   'https://hermesstudio.com.ar',
@@ -12,7 +12,7 @@ Hermes Studio ofrece: gestión de redes sociales, diseño gráfico, campañas pu
 
 Tu rol es responder consultas sobre los servicios de la agencia, orientar a potenciales clientes y agendar reuniones de diagnóstico gratuitas. Nunca inventés precios concretos — si preguntan por presupuesto, invitá a agendar una llamada. Respondés de forma breve y clara, máximo 3 párrafos.
 
-Cuando un usuario quiere agendar una reunión o mostró interés concreto en algún servicio, pedile naturalmente su nombre, email y disponibilidad horaria. Si el usuario da un horario vago como "el martes" o "a la mañana", preguntale la fecha exacta (día y mes) antes de verificar. Solo agendás reuniones de lunes a viernes entre las 9:00 y las 18:00 hs (el último turno arranca a las 17:00). Antes de confirmar cualquier horario, siempre usá verificar_disponibilidad con la fecha en formato YYYY-MM-DD y la hora en formato HH:MM. Si el resultado indica que está ocupado o fuera del horario laboral, informalo con naturalidad y pedí otro horario. Una vez que tenés un horario disponible confirmado, nombre y email, usá registrar_lead con nombre, email, horario (texto legible), fecha (YYYY-MM-DD), hora (HH:MM) e interés. Después confirmale que el equipo lo va a contactar.`;
+Cuando un usuario quiere agendar una reunión o mostró interés concreto en algún servicio, pedile su nombre, email y una fecha preferida (día y mes). Si la fecha es vaga, preguntale el día y mes exactos. Usá consultar_disponibilidad con la fecha en formato YYYY-MM-DD para ver los horarios disponibles ese día y mostrarlos al usuario. Si no hay horarios ese día, pedí otra fecha. Una vez que el usuario eligió un horario específico de la lista, usá registrar_lead con nombre, email, horario (texto legible), fecha (YYYY-MM-DD), hora (HH:MM) e interés. El resultado va a incluir un link de Calendly — compartíselo al usuario para que complete la reserva con un clic.`;
 
 const LEAD_TOOL = {
   name: 'registrar_lead',
@@ -32,15 +32,14 @@ const LEAD_TOOL = {
 };
 
 const AVAILABILITY_TOOL = {
-  name: 'verificar_disponibilidad',
-  description: 'Verifica si un horario está disponible en el calendario de Hermes Studio. Llamá esta herramienta cada vez que el usuario proponga un horario, antes de confirmarlo.',
+  name: 'consultar_disponibilidad',
+  description: 'Consulta los horarios disponibles en Calendly para una fecha específica. Mostrá los resultados al usuario para que elija.',
   input_schema: {
     type: 'object',
     properties: {
       fecha: { type: 'string', description: 'Fecha en formato YYYY-MM-DD' },
-      hora: { type: 'string', description: 'Hora en formato HH:MM (24 horas)' },
     },
-    required: ['fecha', 'hora'],
+    required: ['fecha'],
   },
 };
 
@@ -126,20 +125,18 @@ module.exports = async function handler(req, res) {
       const toolBlock = currentResponse.content.find(b => b.type === 'tool_use');
       let toolResult;
 
-      if (toolBlock.name === 'verificar_disponibilidad') {
+      if (toolBlock.name === 'consultar_disponibilidad') {
         try {
-          const { fecha, hora } = toolBlock.input;
-          const availability = await checkAvailability(fecha, hora);
-          if (!availability.available) {
-            toolResult = availability.reason === 'horario_laboral'
-              ? 'Horario fuera de rango laboral. Solo se pueden agendar reuniones de lunes a viernes de 9:00 a 18:00.'
-              : 'Ese horario ya está ocupado en el calendario.';
+          const { fecha } = toolBlock.input;
+          const slots = await getAvailableSlots(fecha);
+          if (slots.length === 0) {
+            toolResult = `No hay horarios disponibles el ${fecha}. Por favor, elegí otra fecha.`;
           } else {
-            toolResult = 'Horario disponible.';
+            toolResult = `Horarios disponibles el ${fecha}: ${slots.join(', ')}.`;
           }
         } catch (err) {
-          console.error('Calendar check error:', err.message);
-          toolResult = 'No se pudo verificar el calendario. Asumí que el horario está disponible y continuá.';
+          console.error('Calendly availability error:', err.message);
+          toolResult = 'No se pudo consultar la disponibilidad. Pedile al usuario que elija otra fecha o intentá de nuevo.';
         }
       } else if (toolBlock.name === 'registrar_lead') {
         try {
@@ -148,12 +145,14 @@ module.exports = async function handler(req, res) {
           console.error('Lead notification failed:', err.message);
         }
         try {
-          await createCalendarEvent(toolBlock.input);
+          const link = await buildCalendlyLink(toolBlock.input.fecha);
+          leadCaptured = true;
+          toolResult = `Lead registrado exitosamente. Compartí este link al usuario para completar la reserva: ${link}`;
         } catch (err) {
-          console.error('Calendar event error:', err.message);
+          console.error('Calendly link error:', err.message);
+          leadCaptured = true;
+          toolResult = 'Lead registrado exitosamente.';
         }
-        leadCaptured = true;
-        toolResult = 'Lead registrado exitosamente.';
       } else {
         console.error('Unknown tool called:', toolBlock.name);
         toolResult = 'Herramienta desconocida. Respondé directamente al usuario.';
