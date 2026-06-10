@@ -136,7 +136,7 @@ module.exports = async function handler(req, res) {
           }
         } catch (err) {
           console.error('Calendly availability error:', err.message);
-          toolResult = 'No se pudo consultar la disponibilidad. Pedile al usuario que elija otra fecha o intentá de nuevo.';
+          toolResult = `ERROR_DEBUG: ${err.message}`;
         }
       } else if (toolBlock.name === 'registrar_lead') {
         try {
