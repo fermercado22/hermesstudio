@@ -29,12 +29,11 @@ async function getEventType() {
   );
 
   const slug = process.env.CALENDLY_EVENT_SLUG;
-  console.log('Calendly event types:', JSON.stringify(eventTypesResponse.collection.map(et => ({ slug: et.slug, uri: et.uri, active: et.active }))));
-
-  const eventType = eventTypesResponse.collection.find(et => et.slug === slug);
+  const eventType = eventTypesResponse.collection.find(et => et.slug === slug)
+    || eventTypesResponse.collection[0];
 
   if (!eventType) {
-    throw new Error(`Event type with slug "${slug}" not found. Available: ${eventTypesResponse.collection.map(et => et.slug).join(', ')}`);
+    throw new Error('No active event types found in Calendly account');
   }
 
   cachedEventType = eventType;
