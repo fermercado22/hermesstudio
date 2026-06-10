@@ -41,14 +41,19 @@ async function getEventType() {
 }
 
 async function getAvailableSlots(fecha) {
+  console.log('[calendly] step 1: getting event type');
   const eventType = await getEventType();
+  console.log('[calendly] step 2: event type uri:', eventType.uri);
 
   const startTime = `${fecha}T00:00:00-03:00`;
   const endTime = `${fecha}T23:59:59-03:00`;
+  console.log('[calendly] step 3: querying availability', startTime, endTime);
 
   const response = await fetchCalendly(
     `/event_type_available_times?event_type=${encodeURIComponent(eventType.uri)}&start_time=${encodeURIComponent(startTime)}&end_time=${encodeURIComponent(endTime)}`
   );
+
+  console.log('[calendly] step 4: slots raw count:', response.collection?.length);
 
   return response.collection
     .filter(slot => slot.status === 'available')
