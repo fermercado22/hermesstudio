@@ -162,6 +162,7 @@ em { font-style: normal; color: var(--accent); }
   flex-shrink: 0;
 }
 .nav__caduceus { color: var(--primary); flex-shrink: 0; }
+.nav__logo-full { height: 30px; width: auto; display: block; flex-shrink: 0; }
 .nav__wordmark {
   font-family: var(--font-head);
   font-size: 1.0625rem;
@@ -260,9 +261,12 @@ em { font-style: normal; color: var(--accent); }
 
 .hero__visual {
   position: relative;
-  width: 260px;
+  width: 380px;
   height: 320px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .hero__orb {
   position: absolute;
@@ -283,12 +287,11 @@ em { font-style: normal; color: var(--accent); }
 .hero__caduceus-big {
   position: relative;
   z-index: 1;
-  width: 240px;
-  height: 320px;
+  width: 100%;
+  height: auto;
   margin: 0 auto;
-  color: var(--primary);
   animation: float 5s ease-in-out infinite;
-  filter: drop-shadow(0 12px 28px rgba(34,77,157,0.22));
+  filter: drop-shadow(0 10px 22px rgba(34,77,157,0.16));
 }
 @keyframes float {
   0%, 100% { transform: translateY(0); }
