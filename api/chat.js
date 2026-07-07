@@ -123,6 +123,7 @@ module.exports = async function handler(req, res) {
     const reply = response.content.find(b => b.type === 'text')?.text ?? '';
     res.status(200).json({ reply });
   } catch (err) {
+    console.error('Handler error:', err);
     res.status(500).json({ error: 'Ocurrió un error. Por favor, intentá de nuevo.' });
   }
 };
