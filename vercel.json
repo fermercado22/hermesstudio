@@ -1,10 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "landing-v2/package.json",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "dist" }
-    }
-  ]
+  "buildCommand": "cd landing-v2 && npm install && npm run build",
+  "outputDirectory": "landing-v2/dist",
+  "framework": null
 }
