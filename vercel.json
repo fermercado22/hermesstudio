@@ -2,18 +2,9 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/chat.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "landing/**",
-      "use": "@vercel/static"
+      "src": "landing-v2/package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
     }
-  ],
-  "routes": [
-    { "src": "/api/chat", "dest": "/api/chat.js" },
-    { "src": "/style.css", "dest": "/landing/style.css" },
-    { "src": "/main.js", "dest": "/landing/main.js" },
-    { "src": "/(.*)", "dest": "/landing/index.html" }
   ]
 }
