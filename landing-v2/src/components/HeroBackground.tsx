@@ -2,20 +2,34 @@ import { lazy, Suspense, useEffect, useState } from 'react'
 
 const HeroShader = lazy(() => import('./HeroShader'))
 
-function supportsWebGPU() {
-  return typeof navigator !== 'undefined' && 'gpu' in navigator
+async function hasWorkingWebGPU() {
+  if (typeof navigator === 'undefined' || !('gpu' in navigator)) return false
+  try {
+    const gpu = (navigator as unknown as { gpu: { requestAdapter: () => Promise<unknown> } }).gpu
+    const adapter = await gpu.requestAdapter()
+    return !!adapter
+  } catch {
+    return false
+  }
 }
 
 /**
  * El shader (paquete `shaders`, WebGPU) pesa bastante y afecta el LCP del hero.
- * Se carga con lazy() recién en el cliente, y en navegadores sin WebGPU se
- * muestra un degradé CSS con los mismos colores en vez de intentar renderizarlo.
+ * Se carga con lazy() recién en el cliente. Algunos navegadores (sobre todo en
+ * mobile) exponen `navigator.gpu` pero no logran crear un adapter real — ahí
+ * hay que caer al degradé CSS igual, no alcanza con detectar la propiedad.
  */
 export default function HeroBackground() {
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
-    if (supportsWebGPU()) setReady(true)
+    let cancelled = false
+    hasWorkingWebGPU().then((ok) => {
+      if (ok && !cancelled) setReady(true)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const fallback = (
