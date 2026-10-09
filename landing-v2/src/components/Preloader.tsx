@@ -6,7 +6,9 @@ export default function Preloader() {
   const [phase, setPhase] = useState<'show' | 'exit' | 'done'>('show')
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const isMobile = window.matchMedia('(max-width: 639px)').matches
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!isMobile || reducedMotion) {
       setPhase('done')
       return
     }
