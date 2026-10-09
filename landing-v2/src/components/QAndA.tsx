@@ -58,7 +58,7 @@ export default function QAndA() {
               )
             })}
           </div>
-          <div className="flex flex-col gap-10 sm:gap-12 md:mt-24">
+          <div className="flex flex-col gap-10 sm:gap-12">
             {RIGHT.map((item) => {
               i += 1
               return (
