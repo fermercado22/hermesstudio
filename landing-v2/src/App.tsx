@@ -1,3 +1,4 @@
+import Preloader from './components/Preloader'
 import OlympusNav from './components/OlympusNav'
 import Hero from './components/Hero'
 import Showcase from './components/Showcase'
@@ -10,6 +11,7 @@ import WhatsAppFloat from './components/WhatsAppFloat'
 export default function App() {
   return (
     <>
+      <Preloader />
       <OlympusNav />
       <Hero />
       <Showcase />
