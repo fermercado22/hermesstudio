@@ -12,7 +12,7 @@ export default function Showcase() {
   const ref = useScrollReveal<HTMLDivElement>()
 
   return (
-    <section className="relative bg-gradient-to-b from-[#05070f] via-[#071a40] to-[#0A48AD] overflow-hidden">
+    <section id="nosotros" className="relative bg-gradient-to-b from-[#05070f] via-[#071a40] to-[#0A48AD] overflow-hidden">
       <HermesMark className="pointer-events-none absolute -right-32 -top-20 w-[28rem] h-[28rem] text-white/5" />
 
       <div ref={ref} className="relative max-w-[1100px] mx-auto px-5 sm:px-8 py-28 sm:py-36 lg:py-44 text-center">
