@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import HermesMark from './HermesMark'
+import HermesLogo from './HermesLogo'
 
 /** Pantalla de carga: muestra el isotipo y desliza todo hacia arriba para revelar la página. Sin librerías, solo CSS. */
 export default function Preloader() {
@@ -34,7 +34,10 @@ export default function Preloader() {
       className={`fixed inset-0 z-[100] flex items-center justify-center bg-[#05070f] ${phase === 'exit' ? 'preloader-exit' : ''}`}
       aria-hidden="true"
     >
-      <HermesMark className="preloader-logo h-12 w-12 sm:h-16 sm:w-16 text-white" />
+      <HermesLogo
+        className="preloader-logo h-10 sm:h-14 w-auto text-white"
+        style={{ ['--logo-mark' as string]: '#a9c1ee' }}
+      />
     </div>
   )
 }
