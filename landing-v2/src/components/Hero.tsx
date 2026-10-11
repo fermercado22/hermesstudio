@@ -37,7 +37,7 @@ export default function Hero() {
           className="hero-fade-up mt-6 sm:mt-8 max-w-xl mx-auto text-white/70 text-[15px] sm:text-lg leading-relaxed"
           style={{ animationDelay: '0.4s' }}
         >
-          Hermes: dios del comercio y la velocidad. Webs, publicidad y automatización que llegan rápido, sin vueltas.
+          Hermes: dios del comercio y la velocidad. Webs, publicidad, SEO, email y diseño que llegan rápido, sin vueltas.
         </p>
 
         <div className="hero-fade-up mt-10 sm:mt-12 flex flex-col items-center gap-4 sm:gap-5" style={{ animationDelay: '0.55s' }}>

@@ -13,7 +13,6 @@ const OTHER_SERVICES = [
   { title: 'Google Ads', desc: 'Aparecés cuando alguien ya está buscando lo que vendés.' },
   { title: 'Meta Ads', desc: 'Publicidad en Instagram y Facebook con segmentación precisa.' },
   { title: 'Email Marketing', desc: 'Campañas que fidelizan clientes y generan ventas recurrentes.' },
-  { title: 'Automatización', desc: 'Procesos con IA para no perder tiempo en tareas repetitivas.' },
   { title: 'Diseño & Branding', desc: 'Identidad visual que comunica quién sos antes de hablar.' },
 ]
 

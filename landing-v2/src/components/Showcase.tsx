@@ -4,7 +4,7 @@ import RollButton from './RollButton'
 
 const STEPS = [
   { n: '01', title: 'Escuchamos tu negocio', text: 'Qué vendés, a quién y cómo te escriben hoy.' },
-  { n: '02', title: 'Diseñamos y lanzamos', text: 'Web, anuncios y automatizaciones, en semanas.' },
+  { n: '02', title: 'Diseñamos y lanzamos', text: 'Web, anuncios y todo lo que necesites, en semanas.' },
   { n: '03', title: 'Medimos consultas', text: 'Lo que cuenta: gente escribiéndote por WhatsApp.' },
 ]
 

@@ -26,7 +26,7 @@ const RIGHT = [
   },
   {
     q: '¿Qué sigue después de la web?',
-    a: 'Publicidad y automatización, cuando estés listo. Un paso a la vez, sin venderte humo.',
+    a: 'Publicidad, SEO, email marketing y diseño, cuando estés listo. Un paso a la vez, sin venderte humo.',
   },
 ]
 
