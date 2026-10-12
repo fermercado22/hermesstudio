@@ -46,29 +46,16 @@ export default function QAndA() {
           <span>R</span>
         </h2>
 
-        <div className="grid md:grid-cols-2 gap-10 sm:gap-14 lg:gap-20">
-          <div className="flex flex-col gap-10 sm:gap-12">
-            {LEFT.map((item) => {
-              i += 1
-              return (
-                <div key={item.q} className="reveal" style={{ animationDelay: `${0.12 * i}s` }}>
-                  <h3 className="font-display text-xs sm:text-base uppercase tracking-wide text-white mb-2">{item.q}</h3>
-                  <p className="text-[12px] sm:text-sm leading-relaxed text-white/60">{item.a}</p>
-                </div>
-              )
-            })}
-          </div>
-          <div className="flex flex-col gap-10 sm:gap-12">
-            {RIGHT.map((item) => {
-              i += 1
-              return (
-                <div key={item.q} className="reveal" style={{ animationDelay: `${0.12 * i}s` }}>
-                  <h3 className="font-display text-xs sm:text-base uppercase tracking-wide text-white mb-2">{item.q}</h3>
-                  <p className="text-[12px] sm:text-sm leading-relaxed text-white/60">{item.a}</p>
-                </div>
-              )
-            })}
-          </div>
+        <div className="grid md:grid-cols-2 gap-x-10 lg:gap-x-20 gap-y-10 sm:gap-y-12">
+          {LEFT.flatMap((l, k) => (RIGHT[k] ? [l, RIGHT[k]] : [l])).map((item) => {
+            i += 1
+            return (
+              <div key={item.q} className="reveal" style={{ animationDelay: `${0.12 * i}s` }}>
+                <h3 className="font-display text-xs sm:text-base uppercase tracking-wide text-white mb-2">{item.q}</h3>
+                <p className="text-[12px] sm:text-sm leading-relaxed text-white/60">{item.a}</p>
+              </div>
+            )
+          })}
         </div>
       </div>
     </section>
