@@ -25,7 +25,7 @@ export default function OlympusNav() {
             {l.label}
           </a>
         ))}
-        <a href="#inicio" aria-label="Hermes Studio — Inicio" className="flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-300">
+        <a href="#inicio" aria-label="Hermes Studio, inicio" className="flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-300">
           <HermesMark className="h-6 w-6 sm:h-9 sm:w-9 text-white" />
         </a>
         {LINKS_RIGHT.map((l) => (

@@ -24,7 +24,7 @@ export default function RollButton({ href, children, variant = 'brand', size = '
     <a
       href={href}
       {...(!isInternalAnchor && { target: '_blank', rel: 'noopener noreferrer' })}
-      className={`group inline-flex items-center gap-3 ${pad} rounded-full ${bg} text-white font-medium ${textSize} transition-colors duration-300`}
+      className={`group inline-flex items-center gap-3 ${pad} rounded-lg ${bg} text-white font-medium ${textSize} transition-colors duration-300`}
     >
       <span className="relative h-[20px] overflow-hidden block">
         <span
@@ -35,7 +35,7 @@ export default function RollButton({ href, children, variant = 'brand', size = '
           <span className="h-[20px] leading-[20px] block">{children}</span>
         </span>
       </span>
-      <span className={`flex items-center justify-center ${circleSize} rounded-full bg-white shrink-0`}>
+      <span className={`flex items-center justify-center ${circleSize} rounded-md bg-white shrink-0`}>
         <ArrowRight
           className={`${arrowColor} w-3.5 h-3.5 transition-transform duration-500 group-hover:-rotate-45`}
           style={{ transitionTimingFunction: 'cubic-bezier(0.25,0.1,0.25,1)' }}

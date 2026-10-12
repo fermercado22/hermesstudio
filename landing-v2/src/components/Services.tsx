@@ -39,7 +39,7 @@ export default function Services() {
         </h2>
 
         <div className="reveal px-5 sm:px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-5 sm:gap-6 items-start" style={{ animationDelay: '0.15s' }}>
-          <article className="liquid-glass rounded-2xl bg-brand/20 p-7 sm:p-9 lg:p-10">
+          <article className="rounded-lg border border-white/15 bg-brand/25 p-7 sm:p-9 lg:p-10">
             <span className="text-xs font-medium text-white/60 mb-3 block">Servicio principal</span>
             <h3 className="font-display font-medium text-2xl sm:text-3xl text-white mb-3">Desarrollo Web</h3>
             <p className="text-white/70 text-[14px] sm:text-[15px] leading-relaxed mb-7">
@@ -55,7 +55,7 @@ export default function Services() {
             </ul>
           </article>
 
-          <div className="liquid-glass rounded-2xl p-7 sm:p-9 lg:p-10">
+          <div className="rounded-lg border border-white/10 bg-white/[0.03] p-7 sm:p-9 lg:p-10">
             <span className="text-xs font-medium text-white/50 mb-4 block">También ofrecemos</span>
             <ul className="flex flex-col divide-y divide-white/10">
               {OTHER_SERVICES.map(({ title, desc }) => (

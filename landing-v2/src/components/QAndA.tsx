@@ -3,7 +3,7 @@ import { useScrollReveal } from '../hooks/useScrollReveal'
 const LEFT = [
   {
     q: '¿Por qué Hermes?',
-    a: 'Hermes es el mensajero de los dioses: el que conecta y mueve las cosas rápido. Así encaramos cada proyecto — nada se frena en el camino.',
+    a: 'Hermes es el mensajero de los dioses: el que conecta y mueve las cosas rápido. Así encaramos cada proyecto: nada se frena en el camino.',
   },
   {
     q: '¿Cómo trabajan tan rápido?',
@@ -11,7 +11,7 @@ const LEFT = [
   },
   {
     q: '¿Para quién es Hermes Studio?',
-    a: 'Para empresas que necesitan verse serias y que las contacten ya — nada de formularios eternos, un WhatsApp que no para de sonar.',
+    a: 'Para empresas que necesitan verse serias y que las contacten ya. Nada de formularios eternos, un WhatsApp que no para de sonar.',
   },
 ]
 

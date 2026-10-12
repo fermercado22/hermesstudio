@@ -12,11 +12,11 @@ export default function Showcase() {
   const ref = useScrollReveal<HTMLDivElement>()
 
   return (
-    <section id="nosotros" className="relative bg-gradient-to-b from-[#05070f] via-[#071a40] to-[#0A48AD] overflow-hidden">
+    <section id="nosotros" className="relative bg-brand overflow-hidden">
       <HermesMark className="pointer-events-none absolute -right-32 -top-20 w-[28rem] h-[28rem] text-white/5" />
 
       <div ref={ref} className="relative max-w-[1100px] mx-auto px-5 sm:px-8 py-28 sm:py-36 lg:py-44 text-center">
-        <span className="reveal inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-white/50 mb-6">
+        <span className="reveal inline-block text-[11px] sm:text-xs uppercase tracking-[0.3em] text-white/70 mb-6">
           Cómo trabajamos
         </span>
 
@@ -28,18 +28,18 @@ export default function Showcase() {
         </h2>
 
         <p
-          className="reveal max-w-xl mx-auto text-white/70 text-[15px] sm:text-lg leading-relaxed mb-14 sm:mb-16"
+          className="reveal max-w-xl mx-auto text-white/85 text-[15px] sm:text-lg leading-relaxed mb-14 sm:mb-16"
           style={{ animationDelay: '0.2s' }}
         >
-          Las mismas herramientas digitales que usan las grandes marcas, pensadas para tu negocio. Ejecución rápida con IA — semanas, no meses.
+          Las mismas herramientas digitales que usan las grandes marcas, pensadas para tu negocio. Ejecución rápida con IA: semanas, no meses.
         </p>
 
         <div className="reveal grid sm:grid-cols-3 gap-5 sm:gap-6 text-left" style={{ animationDelay: '0.3s' }}>
           {STEPS.map((st) => (
-            <div key={st.n} className="liquid-glass rounded-2xl p-6 sm:p-7">
-              <span className="font-display text-white/40 text-lg">{st.n}</span>
+            <div key={st.n} className="rounded-lg border border-white/15 bg-white/[0.06] p-6 sm:p-7">
+              <span className="font-display text-white/60 text-lg">{st.n}</span>
               <h3 className="font-display font-medium text-white text-base sm:text-lg mt-2">{st.title}</h3>
-              <p className="text-white/60 text-sm mt-1.5 leading-relaxed">{st.text}</p>
+              <p className="text-white/80 text-sm mt-1.5 leading-relaxed">{st.text}</p>
             </div>
           ))}
         </div>
