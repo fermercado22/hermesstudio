@@ -2,7 +2,7 @@ import { Check } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
 const WEB_INCLUDES = [
-  'Diseño a medida, no una plantilla genérica',
+  'Diseño pensado para tu rubro, con catálogo y WhatsApp',
   'Catálogo o secciones de servicios, según tu negocio',
   'SEO on-page y compresión de imágenes para que cargue rápido',
   'Contacto directo por WhatsApp, sin formularios que nadie llena',

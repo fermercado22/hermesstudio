@@ -119,7 +119,7 @@ export default function Expositor() {
           style={{ animationDelay: '0.1s', fontSize: 'clamp(1.75rem, 7vw, 4.2rem)' }}
         >
           Así se ve una web
-          <br className="hidden sm:block" /> hecha a medida.
+          <br className="hidden sm:block" /> pensada para tu rubro.
         </h2>
         <p
           className="reveal px-5 sm:px-8 lg:px-12 max-w-2xl text-white/60 text-[14px] sm:text-base leading-relaxed mb-10 sm:mb-14"
