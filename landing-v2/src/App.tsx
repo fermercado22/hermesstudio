@@ -3,6 +3,7 @@ import OlympusNav from './components/OlympusNav'
 import Hero from './components/Hero'
 import Showcase from './components/Showcase'
 import Services from './components/Services'
+import Expositor from './components/Expositor'
 import QAndA from './components/QAndA'
 import QuoteBanner from './components/QuoteBanner'
 import Footer from './components/Footer'
@@ -16,6 +17,7 @@ export default function App() {
       <Hero />
       <Showcase />
       <Services />
+      <Expositor />
       <QAndA />
       <QuoteBanner />
       <Footer />

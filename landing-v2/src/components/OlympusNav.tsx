@@ -3,6 +3,7 @@ import HermesMark from './HermesMark'
 const LINKS_LEFT = [
   { href: '#nosotros', label: 'Proceso' },
   { href: '#servicios', label: 'Servicios' },
+  { href: '#ejemplos', label: 'Ejemplos' },
 ]
 const LINKS_RIGHT = [
   { href: '#preguntas', label: 'Preguntas' },

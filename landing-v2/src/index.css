@@ -116,3 +116,34 @@ body {
 .preloader-exit {
   animation: preloader-slide-up 0.7s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
+
+/* Expositor de demos: el recorrido de la web de ejemplo lo maneja el scroll (ver Expositor.tsx) */
+@keyframes demo-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.demo-fade {
+  animation: demo-fade 0.6s ease both;
+}
+@keyframes demo-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.demo-progress {
+  transform-origin: left;
+  animation: demo-progress 7s linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-fade,
+  .demo-progress {
+    animation: none;
+  }
+}
