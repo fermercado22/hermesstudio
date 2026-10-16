@@ -31,7 +31,7 @@ export default function Showcase() {
           className="reveal max-w-xl mx-auto text-white/85 text-[15px] sm:text-lg leading-relaxed mb-14 sm:mb-16"
           style={{ animationDelay: '0.2s' }}
         >
-          Las mismas herramientas digitales que usan las grandes marcas, pensadas para tu negocio. Ejecución rápida con IA: semanas, no meses.
+          Las mismas herramientas digitales que usan las grandes marcas, pensadas para tu negocio.
         </p>
 
         <div className="reveal grid sm:grid-cols-3 gap-5 sm:gap-6 text-left" style={{ animationDelay: '0.3s' }}>
