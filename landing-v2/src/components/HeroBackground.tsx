@@ -1,8 +1,13 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
+import ErrorBoundary from './ErrorBoundary'
 
 const HeroShader = lazy(() => import('./HeroShader'))
 
+// Navegadores integrados de Instagram/Facebook/TikTok: el shader puede dejar la página en blanco.
+const IN_APP_BROWSER = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly/i
+
 async function hasWorkingWebGPU() {
+  if (IN_APP_BROWSER.test(navigator.userAgent)) return false
   if (typeof navigator === 'undefined' || !('gpu' in navigator)) return false
   try {
     const gpu = (navigator as unknown as { gpu: { requestAdapter: () => Promise<unknown> } }).gpu
@@ -39,8 +44,10 @@ export default function HeroBackground() {
   if (!ready) return fallback
 
   return (
-    <Suspense fallback={fallback}>
-      <HeroShader />
-    </Suspense>
+    <ErrorBoundary fallback={fallback}>
+      <Suspense fallback={fallback}>
+        <HeroShader />
+      </Suspense>
+    </ErrorBoundary>
   )
 }

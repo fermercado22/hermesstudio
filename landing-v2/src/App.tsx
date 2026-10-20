@@ -1,3 +1,4 @@
+import ErrorBoundary from './components/ErrorBoundary'
 import Preloader from './components/Preloader'
 import OlympusNav from './components/OlympusNav'
 import Hero from './components/Hero'
@@ -14,7 +15,9 @@ export default function App() {
     <>
       <Preloader />
       <OlympusNav />
-      <Hero />
+      <ErrorBoundary>
+        <Hero />
+      </ErrorBoundary>
       <Showcase />
       <Services />
       <Expositor />
